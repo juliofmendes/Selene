@@ -18,7 +18,7 @@
         <div class="logo"><strong>Selene</strong> | Projeto</div>
         <nav>
             <a href="#">Pacientes</a>
-            <a href="/adm/selene/auth/logout.php" style="margin-left: 1rem;">Sair</a>
+            <a href="/auth/logout.php" style="margin-left: 1rem;">Sair</a>
         </nav>
     </header>
     <main class="container">

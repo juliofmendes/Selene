@@ -25,7 +25,7 @@ if ($usuario && password_verify($senha, $usuario['senha'])) {
     $_SESSION['usuario_nome'] = $usuario['nome'];
     $_SESSION['nivel_acesso'] = $usuario['nivel_acesso'];
     
-    // Redireciona para o dashboard principal, que por sua vez redirecionará para o correto
+    // Redireciona para o dashboard principal
     header('Location: ' . BASE_URL . '/dashboard/index.php');
     exit;
 } else {
@@ -33,3 +33,5 @@ if ($usuario && password_verify($senha, $usuario['senha'])) {
     header('Location: login.php?erro=1');
     exit;
 }
+// A CHAVE EXTRA QUE ESTAVA AQUI FOI REMOVIDA
+?>
