@@ -1,1 +1,1 @@
-<?php echo "Bem-vindo ao Projeto Selene."; ?>
+<?php echo "Bem-vindo ao Projeto Selene!!"; ?>
