@@ -1,0 +1,13 @@
+# Ignorar pastas de build e dependências
+
+
+# Ignorar arquivos de configuração específicos
+*.env
+config.php
+
+# Ignorar arquivos de log
+*.log
+.DS_Store
+
+# Ignorar arquivos temporários
+temp/
