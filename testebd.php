@@ -3,7 +3,7 @@
 $db_host = "localhost";
 $db_name = "u481416738_Selene";
 $db_user = "u481416738_SeleneAdm";
-$db_pass = "$Vv0OG@geP^";
+$db_pass = "3pHjgnpS|";
 
 // --- APENAS O TESTE ---
 try {
