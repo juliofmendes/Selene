@@ -1,0 +1,1 @@
+<?php echo "Bem-vindo ao Projeto Selene."; ?>
