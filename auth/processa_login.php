@@ -26,7 +26,7 @@ if ($usuario && password_verify($senha, $usuario['senha'])) {
     $_SESSION['nivel_acesso'] = $usuario['nivel_acesso'];
     
     // Redireciona para o dashboard principal, que por sua vez redirecionará para o correto
-    header('Location: ../dashboard/index.php');
+    header('Location: ' . BASE_URL . '/dashboard/index.php');
     exit;
 } else {
     // Falha na autenticação

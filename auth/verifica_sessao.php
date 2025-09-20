@@ -7,7 +7,7 @@ session_start();
 if (!isset($_SESSION['usuario_id'])) {
     // Garante que o caminho para o login está correto a partir da raiz do projeto
     // Assumindo que a pasta do projeto é /adm/selene/
-    header('Location: /adm/selene/auth/login.php'); 
+    header('Location: ' . BASE_URL . '/auth/login.php');
     exit;
 }
 
