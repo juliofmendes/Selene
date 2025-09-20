@@ -3,7 +3,7 @@
 
 # Ignorar arquivos de configuração específicos
 *.env
-config.php
+
 
 # Ignorar arquivos de log
 *.log
