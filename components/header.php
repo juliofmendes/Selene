@@ -1,39 +1,42 @@
+<?php
+// Lógica para buscar notificações não lidas para o utilizador logado
+if (isset($_SESSION['usuario_id']) && isset($pdo)) {
+    $notificacaoStmt = $pdo->prepare("SELECT * FROM notificacoes WHERE usuario_id = :uid AND lida = FALSE ORDER BY data_criacao DESC");
+    $notificacaoStmt->execute(['uid' => $_SESSION['usuario_id']]);
+    $notificacoes_nao_lidas = $notificacaoStmt->fetchAll();
+} else {
+    $notificacoes_nao_lidas = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selene</title>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
-</head>
 <body>
     <header class="header">
         <div class="logo"><strong>Selene</strong></div>
         <nav style="display: flex; gap: 1.5rem; align-items: center;">
-            <?php $nivel = $_SESSION['nivel_acesso']; ?>
+            <div class="notificacoes-container">
+                <a href="#" id="notificacoes-bell" class="notificacoes-bell">
+                    🔔
+                    <?php if (count($notificacoes_nao_lidas) > 0): ?>
+                        <span class="notificacoes-count"><?php echo count($notificacoes_nao_lidas); ?></span>
+                    <?php endif; ?>
+                </a>
+                <div id="notificacoes-dropdown" class="notificacoes-dropdown">
+                    <?php if (count($notificacoes_nao_lidas) > 0): ?>
+                        <?php foreach ($notificacoes_nao_lidas as $notificacao): ?>
+                            <a href="<?php echo BASE_URL . $notificacao['link']; ?>" class="notificacao-item">
+                                <?php echo htmlspecialchars($notificacao['mensagem']); ?>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="notificacao-item-vazio">Nenhuma nova notificação</div>
+                    <?php endif; ?>
+                </div>
+            </div>
 
-            <?php if ($nivel === 'psicologo' || $nivel === 'psicologo_autonomo'): ?>
-                <a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php">Dashboard Clínico</a>
-            <?php endif; ?>
-
-            <?php if ($nivel === 'secretaria' || $nivel === 'psicologo_autonomo'): ?>
-                <a href="<?php echo BASE_URL; ?>/dashboard/secretaria.php">Agenda</a>
-                <a href="<?php echo BASE_URL; ?>/financeiro/index.php">Faturas</a>
-            <?php endif; ?>
-
-            <?php if ($nivel === 'gestor'): ?>
-                <a href="<?php echo BASE_URL; ?>/dashboard/gestor.php">Dashboard Gestor</a>
-                <a href="<?php echo BASE_URL; ?>/financeiro/relatorios.php">Relatórios</a>
-            <?php endif; ?>
-
-            <?php if ($nivel === 'admin'): ?>
-                <a href="<?php echo BASE_URL; ?>/admin/index.php">Administração</a>
-                <a href="<?php echo BASE_URL; ?>/dashboard/gestor.php">Visão do Gestor</a>
-                <a href="<?php echo BASE_URL; ?>/financeiro/relatorios.php">Relatórios</a>
-            <?php endif; ?>
-            
             <a href="<?php echo BASE_URL; ?>/auth/logout.php" class="button button-logout">Sair</a>
         </nav>
     </header>
     <main>
-    <style>.button-logout { padding: 0.5rem 1rem; } </style>
+    <style> /* Estilos para o sino de notificação */ </style>
+    <script> /* Script para mostrar/esconder o dropdown */ </script>
