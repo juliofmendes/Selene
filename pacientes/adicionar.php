@@ -26,9 +26,18 @@ require_once '../components/header.php';
     <button type="submit">Cadastrar Paciente</button>
 </form>
 
-<?php
-// Incluir um futuro footer.php aqui
-?>
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Adicionar Novo Paciente</h1>
+        <a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php">&larr; Voltar</a>
+    </div>
+    <div class="card">
+        <form action="processa_adicionar.php" method="POST">
+        </form>
+    </div>
+</div>
+<?php require_once '../components/footer.php'; ?>
+
     </main>
 </body>
 </html>

@@ -31,7 +31,7 @@ require_once '../components/header.php';
                         <td><?php echo htmlspecialchars($usuario['nome']); ?></td>
                         <td><?php echo htmlspecialchars($usuario['email']); ?></td>
                         <td><?php echo htmlspecialchars(ucfirst($usuario['nivel_acesso'])); ?></td>
-                        <td><a href="#">Editar</a></td>
+                        <td><a href="usuario_editar.php?id=<?php echo $usuario['id']; ?>">Editar</a></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

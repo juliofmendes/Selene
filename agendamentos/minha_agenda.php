@@ -1,6 +1,6 @@
 <?php
 require_once '../auth/verifica_sessao.php';
-autorizar(['psicologo']); // Apenas psicólogos
+autorizar(['psicologo', 'psicologo_autonomo']);
 require_once '../config.php';
 
 // Busca TODOS os agendamentos deste psicólogo
