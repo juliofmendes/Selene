@@ -44,7 +44,7 @@ require_once '../components/header.php';
 
     <div class="card">
         <h2>Evoluções Clínicas</h2>
-        <form action="../evolucoes/processa_adicionar.php" method="POST" class="form-secao">
+        <form action="<?php echo BASE_URL; ?>/evolucoes/processa_adicionar.php" method="POST" class="form-secao">
             <input type="hidden" name="paciente_id" value="<?php echo $paciente['id']; ?>">
             <div class="form-group">
                 <label for="titulo">Título da Sessão/Anotação</label>
@@ -67,7 +67,7 @@ require_once '../components/header.php';
                     <p><?php echo nl2br(htmlspecialchars($evolucao['descricao'])); ?></p>
                     <div class="evolucao-actions">
                         <a href="<?php echo BASE_URL; ?>/evolucoes/editar.php?id=<?php echo $evolucao['id']; ?>">Editar</a>
-                        <form action="../evolucoes/excluir.php" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir esta evolução?');">
+                        <form action="<?php echo BASE_URL; ?>/evolucoes/excluir.php" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir esta evolução?');">
                             <input type="hidden" name="evolucao_id" value="<?php echo $evolucao['id']; ?>">
                             <input type="hidden" name="paciente_id" value="<?php echo $paciente_id; ?>">
                             <button type="submit" class="link-delete">Excluir</button>
@@ -82,7 +82,7 @@ require_once '../components/header.php';
 
     <div class="card">
         <h2>Arquivo Digital</h2>
-        <form action="../documentos/processa_upload.php" method="POST" enctype="multipart/form-data" class="form-secao">
+        <form action="<?php echo BASE_URL; ?>/documentos/processa_upload.php" method="POST" enctype="multipart/form-data" class="form-secao">
             <input type="hidden" name="paciente_id" value="<?php echo $paciente['id']; ?>">
             <div class="form-group">
                 <label for="titulo_doc">Título do Documento</label>
@@ -104,7 +104,7 @@ require_once '../components/header.php';
                         <td><?php echo date('d/m/Y', strtotime($doc['data_upload'])); ?></td>
                         <td style="text-align: right;">
                             <a href="<?php echo BASE_URL; ?>/documentos/ver.php?id=<?php echo $doc['id']; ?>" target="_blank" class="button">Ver</a>
-                            <form action="../documentos/excluir.php" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir este documento?');" style="display:inline; margin-left: 0.5rem;">
+                            <form action="<?php echo BASE_URL; ?>/documentos/excluir.php" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir este documento?');" style="display:inline; margin-left: 0.5rem;">
                                 <input type="hidden" name="doc_id" value="<?php echo $doc['id']; ?>">
                                 <input type="hidden" name="paciente_id" value="<?php echo $paciente_id; ?>">
                                 <button type="submit" class="button button-delete">Excluir</button>
@@ -134,4 +134,4 @@ require_once '../components/header.php';
     .link-delete { background:none; border:none; color: #dc3545; cursor:pointer; text-decoration:underline; padding:0; font-family: inherit; font-size: inherit; }
 </style>
 
-<?php require_оnce '../components/footer.php'; ?>
+<?php require_once '../components/footer.php'; ?>
