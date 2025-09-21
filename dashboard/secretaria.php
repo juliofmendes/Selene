@@ -1,6 +1,6 @@
 <?php
 require_once '../auth/verifica_sessao.php';
-autorizar(['secretaria', 'admin']); // Apenas secretarias e admins podem ver a agenda completa
+autorizar(['secretaria', 'admin']);
 require_once '../config.php';
 
 // Busca os agendamentos dos próximos 7 dias para todos os psicólogos
@@ -27,6 +27,12 @@ require_once '../components/header.php';
         <a href="<?php echo BASE_URL; ?>/agendamentos/novo.php" class="button">Novo Agendamento</a>
     </div>
 
+    <?php if (isset($_GET['sucesso_agendamento'])): ?>
+        <div class="alert-sucesso">Novo agendamento criado com sucesso!</div>
+    <?php elseif (isset($_GET['sucesso_edicao'])): ?>
+        <div class="alert-sucesso">Agendamento atualizado com sucesso!</div>
+    <?php endif; ?>
+
     <div class="card">
         <h2>Próximos Agendamentos</h2>
         <?php if (count($agendamentos) > 0): ?>
@@ -47,7 +53,9 @@ require_once '../components/header.php';
                             <td><?php echo htmlspecialchars($agendamento['paciente_nome']); ?></td>
                             <td><?php echo htmlspecialchars($agendamento['psicologo_nome']); ?></td>
                             <td><?php echo htmlspecialchars(ucfirst($agendamento['status'])); ?></td>
-                            <td><a href="#">Ver/Editar</a></td>
+                            <td>
+                                <a href="<?php echo BASE_URL; ?>/agendamentos/editar.php?id=<?php echo $agendamento['id']; ?>">Ver/Editar</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -57,5 +65,7 @@ require_once '../components/header.php';
         <?php endif; ?>
     </div>
 </div>
-
+<style>
+    .alert-sucesso { background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+</style>
 <?php require_once '../components/footer.php'; ?>
