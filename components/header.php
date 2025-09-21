@@ -17,7 +17,7 @@ if (isset($_SESSION['usuario_id'])) {
         $notificacaoStmt->execute(['uid' => $_SESSION['usuario_id']]);
         $notificacoes_nao_lidas = $notificacaoStmt->fetchAll();
     } catch (PDOException $e) {
-        // Ignora o erro silenciosamente para não quebrar o layout
+        // Ignora o erro silenciosamente para não quebrar o layout em caso de falha na BD
     }
 }
 ?>
@@ -68,29 +68,50 @@ if (isset($_SESSION['usuario_id'])) {
         .nav-separator { border-left: 1px solid #ddd; height: 20px; }
         .button-logout { padding: 0.5rem 1rem; }
         .notificacoes-container { position: relative; }
-        .notificacoes-bell { cursor: pointer; position: relative; font-size: 1.5rem; }
+        .notificacoes-bell { cursor: pointer; position: relative; font-size: 1.5rem; line-height: 1; }
         .notificacoes-count { position: absolute; top: -5px; right: -8px; background-color: #dc3545; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .notificacoes-dropdown { display: none; position: absolute; top: 100%; right: 0; background-color: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 350px; z-index: 1000; }
+        .notificacoes-dropdown { display: none; position: absolute; top: calc(100% + 10px); right: 0; background-color: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 350px; z-index: 1000; }
         .notificacoes-dropdown.show { display: block; }
         .notificacoes-header { padding: 1rem; font-weight: bold; border-bottom: 1px solid #eee; }
-        .notificacao-item, .notificacao-item-vazio { display: block; padding: 1rem; border-bottom: 1px solid #eee; color: #333; text-decoration: none; }
+        .notificacao-item, .notificacao-item-vazio { display: block; padding: 1rem; border-bottom: 1px solid #eee; color: #333; text-decoration: none; font-size: 0.9em; }
         .notificacao-item:last-child { border-bottom: none; }
         .notificacao-item:hover { background-color: #f8f9fa; }
-        .notificacao-item-vazio { color: #888; }
+        .notificacao-item-vazio { color: #888; text-align: center; }
     </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const bell = document.getElementById('notificacoes-bell');
             const dropdown = document.getElementById('notificacoes-dropdown');
+            const countBadge = document.querySelector('.notificacoes-count');
+
             if (bell) {
                 bell.addEventListener('click', function(event) {
                     event.stopPropagation();
                     dropdown.classList.toggle('show');
+                    
+                    // Se houver notificações e o dropdown for aberto, marca como lidas
+                    if (dropdown.classList.contains('show') && countBadge) {
+                        // Faz uma chamada assíncrona para a nossa API para marcar as notificações como lidas
+                        fetch('<?php echo BASE_URL; ?>/api/marcar_notificacoes_lidas.php', { 
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Esconde o contador visualmente após a confirmação da API
+                                countBadge.style.display = 'none';
+                            }
+                        })
+                        .catch(error => console.error('Erro ao marcar notificações como lidas:', error));
+                    }
                 });
             }
-            document.addEventListener('click', function() {
-                if (dropdown && dropdown.classList.contains('show')) {
+
+            // Fecha o dropdown se o utilizador clicar fora dele
+            document.addEventListener('click', function(event) {
+                if (dropdown && dropdown.classList.contains('show') && !dropdown.contains(event.target)) {
                     dropdown.classList.remove('show');
                 }
             });
