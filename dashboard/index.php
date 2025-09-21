@@ -1,7 +1,10 @@
 <?php
 require_once '../auth/verifica_sessao.php';
 
-switch ($_SESSION['nivel_acesso']) {
+// Converte o nível de acesso para minúsculas para uma verificação robusta
+$nivel_acesso = strtolower($_SESSION['nivel_acesso']);
+
+switch ($nivel_acesso) {
     case 'psicologo':
         header('Location: psicologo.php');
         break;
@@ -11,12 +14,12 @@ switch ($_SESSION['nivel_acesso']) {
         break;
     
     case 'gestor':
-    case 'admin': // Admin também pode aceder ao dashboard de gestor
+    case 'admin':
         header('Location: gestor.php');
         break;
     
     default:
-        // Segurança
+        // Se o nível de acesso for desconhecido, desloga o utilizador por segurança.
         header('Location: ../auth/logout.php');
         break;
 }
