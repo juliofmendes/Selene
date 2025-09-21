@@ -1,7 +1,8 @@
 <?php
 require_once '../auth/verifica_sessao.php';
-autorizar(['secretaria', 'admin']);
+autorizar(['secretaria', 'admin', 'psicologo_autonomo']);
 require_once '../config.php';
+
 
 // Busca todos os recursos necessários para os menus dropdown
 $pacientes = $pdo->query("SELECT id, nome_completo FROM pacientes ORDER BY nome_completo ASC")->fetchAll();

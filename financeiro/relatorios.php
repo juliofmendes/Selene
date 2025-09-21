@@ -82,10 +82,47 @@ require_once '../components/header.php';
     <div class="card">
         <h2>Resultados</h2>
         <table>
-            </table>
+            <thead>
+                <tr>
+                    <th>Emissão</th>
+                    <th>Status</th>
+                    <th>Paciente</th>
+                    <th>Psicólogo</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (count($faturas) > 0): ?>
+                    <?php foreach ($faturas as $fatura): ?>
+                        <tr>
+                            <td><?php echo date('d/m/Y', strtotime($fatura['data_emissao'])); ?></td>
+                            <td>
+                                <span class="status-financeiro status-<?php echo htmlspecialchars($fatura['status']); ?>">
+                                    <?php echo htmlspecialchars(ucfirst($fatura['status'])); ?>
+                                </span>
+                            </td>
+                            <td><?php echo htmlspecialchars($fatura['paciente_nome']); ?></td>
+                            <td><?php echo htmlspecialchars($fatura['psicologo_nome']); ?></td>
+                            <td>R$ <?php echo number_format($fatura['valor'], 2, ',', '.'); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" style="text-align: center;">Nenhuma fatura encontrada para os filtros selecionados.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 <style>
     .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: flex-end; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .kpi-card { text-align: center; }
+    .kpi-card h2 { font-size: 1.2em; color: #555; margin-bottom: 0.5rem; }
+    .kpi-value { font-size: 2.5em; font-weight: 600; color: var(--cor-primaria); margin: 0; }
+    .status-financeiro { padding: 0.2rem 0.5rem; border-radius: 4px; color: white; font-size: 0.8em; }
+    .status-pendente { background-color: #ffc107; color: #333; }
+    .status-paga { background-color: #28a745; }
 </style>
 <?php require_once '../components/footer.php'; ?>
