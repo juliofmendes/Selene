@@ -18,12 +18,12 @@
 
             <?php if ($nivel === 'secretaria' || $nivel === 'psicologo_autonomo'): ?>
                 <a href="<?php echo BASE_URL; ?>/dashboard/secretaria.php">Agenda</a>
-                <a href="<?php echo BASE_URL; ?>/financeiro/index.php">Financeiro</a>
+                <a href="<?php echo BASE_URL; ?>/financeiro/index.php">Faturas</a>
             <?php endif; ?>
 
             <?php if ($nivel === 'gestor' || $nivel === 'admin'): ?>
                 <a href="<?php echo BASE_URL; ?>/dashboard/gestor.php">Dashboard Gestor</a>
-                <a href="<?php echo BASE_URL; ?>/financeiro/index.php">Financeiro</a>
+                <a href="<?php echo BASE_URL; ?>/financeiro/relatorios.php">Relatórios</a>
             <?php endif; ?>
 
             <?php if ($nivel === 'admin'): ?>
