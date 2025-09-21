@@ -2,36 +2,44 @@
 require_once '../auth/verifica_sessao.php';
 require_once '../config.php';
 
-// 1. Validar o ID do Paciente
-// Verificamos se um ID foi passado pela URL e se é um número
+// ... (toda a lógica de validação do ID do paciente e busca do paciente que já existe continua igual até aqui) ...
 $paciente_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-if (!$paciente_id) {
-    // Se não houver ID ou se não for válido, redireciona para o dashboard
-    header('Location: ' . BASE_URL . '/dashboard/psicologo.php');
-    exit;
-}
+if (!$paciente_id) { header('Location: ' . BASE_URL . '/dashboard/psicologo.php'); exit; }
 
-// 2. Buscar o Paciente no Banco de Dados com Segurança
-// A consulta inclui "psicologo_id = ?" para garantir que o psicólogo
-// só possa ver pacientes que lhe pertencem. Esta é uma verificação de segurança CRÍTICA.
-$stmt = $pdo->prepare(
-    "SELECT * FROM pacientes WHERE id = :paciente_id AND psicologo_id = :psicologo_id"
-);
-$stmt->execute([
-    'paciente_id' => $paciente_id,
-    'psicologo_id' => $_SESSION['usuario_id']
-]);
+$stmt = $pdo->prepare("SELECT * FROM pacientes WHERE id = :paciente_id AND psicologo_id = :psicologo_id");
+$stmt->execute(['paciente_id' => $paciente_id, 'psicologo_id' => $_SESSION['usuario_id']]);
 $paciente = $stmt->fetch();
 
-// 3. Verificar se o Paciente Foi Encontrado
-// Se a consulta não retornar nenhum resultado, significa que o paciente não existe ou não pertence a este psicólogo.
-if (!$paciente) {
-    // Redireciona para o dashboard por segurança
-    header('Location: ' . BASE_URL . '/dashboard/psicologo.php');
-    exit;
+if (!$paciente) { header('Location: ' . BASE_URL . '/dashboard/psicologo.php'); exit; }
+
+// --- NOVA LÓGICA PARA PROCESSAR O FORMULÁRIO DE EVOLUÇÃO ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $titulo = trim($_POST['titulo'] ?? '');
+    $descricao = trim($_POST['descricao'] ?? '');
+    $data_evolucao = date('Y-m-d H:i:s'); // Data e hora atuais
+
+    if (!empty($titulo) && !empty($descricao)) {
+        $insertStmt = $pdo->prepare(
+            "INSERT INTO evolucoes (paciente_id, psicologo_id, data_evolucao, titulo, descricao) VALUES (:pid, :psid, :data, :titulo, :desc)"
+        );
+        $insertStmt->execute([
+            'pid' => $paciente_id,
+            'psid' => $_SESSION['usuario_id'],
+            'data' => $data_evolucao,
+            'titulo' => $titulo,
+            'desc' => $descricao
+        ]);
+        // Redireciona para a mesma página para evitar reenvio do formulário
+        header('Location: ' . BASE_URL . '/pacientes/ver.php?id=' . $paciente_id);
+        exit;
+    }
 }
 
-// Se chegamos até aqui, o paciente é válido e pertence ao psicólogo logado.
+// --- NOVA LÓGICA PARA BUSCAR AS EVOLUÇÕES EXISTENTES ---
+$evolucaoStmt = $pdo->prepare("SELECT * FROM evolucoes WHERE paciente_id = :pid ORDER BY data_evolucao DESC");
+$evolucaoStmt->execute(['pid' => $paciente_id]);
+$evolucoes = $evolucaoStmt->fetchAll();
+
 require_once '../components/header.php';
 ?>
 
@@ -42,19 +50,39 @@ require_once '../components/header.php';
     <h2><?php echo htmlspecialchars($paciente['nome_completo']); ?></h2>
     <p><strong>Email:</strong> <?php echo htmlspecialchars($paciente['email'] ?: 'Não informado'); ?></p>
     <p><strong>Telefone:</strong> <?php echo htmlspecialchars($paciente['telefone'] ?: 'Não informado'); ?></p>
-    <p><strong>Data de Nascimento:</strong> <?php echo $paciente['data_nascimento'] ? date('d/m/Y', strtotime($paciente['data_nascimento'])) : 'Não informada'; ?></p>
-    <p><strong>Status:</strong> <span class="status-<?php echo htmlspecialchars($paciente['status']); ?>"><?php echo htmlspecialchars(ucfirst($paciente['status'])); ?></span></p>
-    <p><strong>Paciente desde:</strong> <?php echo date('d/m/Y', strtotime($paciente['data_criacao'])); ?></p>
 </div>
 
 <div class="card-evolucao">
-    <h2>Evolução e Prontuário</h2>
-    <p><em>(Em breve, aqui será o espaço para adicionar e visualizar as evoluções, anotações e o histórico do paciente.)</em></p>
+    <h2>Nova Evolução</h2>
+    <form method="POST" action="">
+        <div class="form-group">
+            <label for="titulo">Título da Sessão/Anotação</label>
+            <input type="text" name="titulo" required>
+        </div>
+        <div class="form-group">
+            <label for="descricao">Descrição Detalhada (Evolução)</label>
+            <textarea name="descricao" rows="10" required></textarea>
+        </div>
+        <button type="submit">Adicionar Evolução</button>
+    </form>
 </div>
 
-<?php
-// Adicionar um futuro footer.php
-?>
+<div class="historico-evolucoes">
+    <h2>Histórico de Evoluções</h2>
+    <?php if (count($evolucoes) > 0): ?>
+        <?php foreach ($evolucoes as $evolucao): ?>
+            <div class="card-evolucao-item">
+                <h3><?php echo htmlspecialchars($evolucao['titulo']); ?></h3>
+                <p><strong>Data:</strong> <?php echo date('d/m/Y H:i', strtotime($evolucao['data_evolucao'])); ?></p>
+                <p><?php echo nl2br(htmlspecialchars($evolucao['descricao'])); ?></p>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>Nenhuma evolução registrada para este paciente.</p>
+    <?php endif; ?>
+</div>
+
+<?php // ... footer ... ?>
     </main>
 </body>
 </html>
