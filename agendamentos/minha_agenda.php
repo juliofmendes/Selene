@@ -2,53 +2,49 @@
 require_once '../auth/verifica_sessao.php';
 autorizar(['psicologo', 'psicologo_autonomo']);
 require_once '../config.php';
-
-// Busca TODOS os agendamentos deste psicólogo
-$stmt = $pdo->prepare(
-    "SELECT 
-        ag.id, ag.data_agendamento, ag.status,
-        pac.nome_completo AS paciente_nome
-     FROM agendamentos AS ag
-     JOIN pacientes AS pac ON ag.paciente_id = pac.id
-     WHERE ag.psicologo_id = :psicologo_id
-     ORDER BY ag.data_agendamento DESC" // Ordem decrescente para ver os mais recentes primeiro
-);
-$stmt->execute(['psicologo_id' => $_SESSION['usuario_id']]);
-$agendamentos = $stmt->fetchAll();
-
 require_once '../components/header.php';
 ?>
 
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+
 <div class="container">
-    <h1>Minha Agenda Completa</h1>
-    <a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php">&larr; Voltar para o dashboard</a>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Minha Agenda</h1>
+        <a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php" class="button">&larr; Voltar ao Dashboard</a>
+    </div>
 
     <div class="card">
-        <?php if (count($agendamentos) > 0): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data e Hora</th>
-                        <th>Paciente</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($agendamentos as $agendamento): ?>
-                        <tr>
-                            <td><?php echo date('d/m/Y H:i', strtotime($agendamento['data_agendamento'])); ?></td>
-                            <td><?php echo htmlspecialchars($agendamento['paciente_nome']); ?></td>
-                            <td><?php echo htmlspecialchars(ucfirst($agendamento['status'])); ?></td>
-                            <td><a href="<?php echo BASE_URL; ?>/pacientes/ver.php?id=<?php echo $agendamento['paciente_id']; ?>">Ir para Dossiê</a></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <p>Nenhum agendamento encontrado no seu histórico.</p>
-        <?php endif; ?>
+        <div id='calendario-pessoal'></div>
     </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const calendarioEl = document.getElementById('calendario-pessoal');
+    const calendario = new FullCalendar.Calendar(calendarioEl, {
+      initialView: 'timeGridWeek', // Visão semanal é mais útil para o psicólogo
+      locale: 'pt-br',
+      allDaySlot: false,
+      slotMinTime: '08:00:00',
+      slotMaxTime: '21:00:00',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: '<?php echo BASE_URL; ?>/api/agendamentos.php',
+      eventClick: function(info) {
+        info.jsEvent.preventDefault();
+        // Psicólogos não editam agendamentos, eles vão para o dossiê.
+        // A URL para o dossiê do paciente precisa ser adicionada na API.
+        // Por agora, mantemos o link de edição.
+        if (info.event.url) {
+          window.location.href = info.event.url;
+        }
+      }
+    });
+    calendario.render();
+  });
+</script>
 
 <?php require_once '../components/footer.php'; ?>
