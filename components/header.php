@@ -10,16 +10,27 @@
     <header class="header">
         <div class="logo"><strong>Selene</strong></div>
         <nav style="display: flex; gap: 1.5rem; align-items: center;">
-            <?php if ($_SESSION['nivel_acesso'] === 'psicologo'): ?>
-                <a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php">Dashboard</a>
-            <?php elseif ($_SESSION['nivel_acesso'] === 'secretaria'): ?>
+            <?php $nivel = $_SESSION['nivel_acesso']; ?>
+
+            <?php if ($nivel === 'psicologo' || $nivel === 'psicologo_autonomo'): ?>
+                <a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php">Dashboard Clínico</a>
+            <?php endif; ?>
+
+            <?php if ($nivel === 'secretaria' || $nivel === 'psicologo_autonomo'): ?>
                 <a href="<?php echo BASE_URL; ?>/dashboard/secretaria.php">Agenda</a>
                 <a href="<?php echo BASE_URL; ?>/financeiro/index.php">Financeiro</a>
-            <?php elseif (in_array($_SESSION['nivel_acesso'], ['gestor', 'admin'])): ?>
+            <?php endif; ?>
+
+            <?php if ($nivel === 'gestor' || $nivel === 'admin'): ?>
                 <a href="<?php echo BASE_URL; ?>/dashboard/gestor.php">Dashboard Gestor</a>
                 <a href="<?php echo BASE_URL; ?>/financeiro/index.php">Financeiro</a>
+            <?php endif; ?>
+
+            <?php if ($nivel === 'admin'): ?>
+                <a href="<?php echo BASE_URL; ?>/admin/usuarios.php">Utilizadores</a>
                 <a href="<?php echo BASE_URL; ?>/admin/servicos.php">Serviços</a>
             <?php endif; ?>
+            
             <a href="<?php echo BASE_URL; ?>/auth/logout.php" class="button button-logout">Sair</a>
         </nav>
     </header>

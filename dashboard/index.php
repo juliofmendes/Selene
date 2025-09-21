@@ -1,5 +1,8 @@
 <?php
 require_once '../auth/verifica_sessao.php';
+autorizar(['secretaria', 'admin', 'gestor', 'psicologo_autonomo']);
+require_once '../config.php';
+// ... resto do ficheiro
 
 // Converte o nível de acesso para minúsculas para uma verificação robusta
 $nivel_acesso = strtolower($_SESSION['nivel_acesso']);

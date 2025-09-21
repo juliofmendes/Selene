@@ -1,6 +1,7 @@
 <?php
 require_once '../auth/verifica_sessao.php';
-autorizar(['secretaria', 'admin']);
+// ATUALIZAÇÃO: Adicionado 'psicologo_autonomo'
+autorizar(['secretaria', 'admin', 'psicologo_autonomo']);
 require_once '../config.php';
 require_once '../components/header.php';
 ?>

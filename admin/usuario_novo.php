@@ -22,10 +22,11 @@ require_once '../components/header.php';
                 <label for="senha">Senha Provisória</label>
                 <input type="password" name="senha" required>
             </div>
-            <div class="form-group">
+			<div class="form-group">
                 <label for="nivel_acesso">Nível de Acesso</label>
                 <select name="nivel_acesso" required>
-                    <option value="psicologo">Psicólogo</option>
+                    <option value="psicologo">Psicólogo (Clínica)</option>
+                    <option value="psicologo_autonomo">Psicólogo (Autónomo)</option>
                     <option value="secretaria">Secretaria</option>
                     <option value="gestor">Gestor</option>
                     <option value="admin">Admin</option>
