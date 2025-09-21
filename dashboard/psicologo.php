@@ -1,9 +1,13 @@
 <?php
 require_once '../auth/verifica_sessao.php';
-autorizar(['psicologo']); // Apenas psicólogos podem aceder a esta página.
+// CORREÇÃO: Adicionado 'psicologo_autonomo' à lista de níveis autorizados.
+autorizar(['psicologo', 'psicologo_autonomo']);
 require_once '../config.php';
 
 $psicologo_id = $_SESSION['usuario_id'];
+
+// O resto do ficheiro permanece exatamente o mesmo, pois a lógica de busca
+// de pacientes e agendamentos já está correta e baseada no ID do utilizador logado.
 
 // Busca os pacientes deste psicólogo
 $pacientesStmt = $pdo->prepare("SELECT id, nome_completo, status FROM pacientes WHERE psicologo_id = :pid ORDER BY nome_completo ASC");
