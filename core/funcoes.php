@@ -10,6 +10,12 @@
  */
 function criar_notificacao(PDO $pdo, int $usuario_id, string $mensagem, ?string $link = null): bool 
 {
+    // Verificação de sanidade para garantir que não estamos a tentar notificar um utilizador inválido.
+    if ($usuario_id <= 0) {
+        // die() é usado aqui temporariamente para depuração.
+        die("Tentativa de criar notificação para um utilizador com ID inválido.");
+    }
+
     try {
         $stmt = $pdo->prepare(
             "INSERT INTO notificacoes (usuario_id, mensagem, link) VALUES (:uid, :msg, :link)"
@@ -21,8 +27,8 @@ function criar_notificacao(PDO $pdo, int $usuario_id, string $mensagem, ?string 
         ]);
         return true;
     } catch (PDOException $e) {
-        // Em um sistema real, logaríamos o erro.
-        // error_log("Erro ao criar notificação: " . $e->getMessage());
+        // Em modo de diagnóstico, mostramos o erro exato.
+        die("ERRO CRÍTICO ao criar notificação: " . $e->getMessage());
         return false;
     }
 }
