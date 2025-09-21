@@ -99,4 +99,22 @@ require_once '../components/header.php';
     .button-link-delete { background: none; border: none; color: #dc3545; text-decoration: underline; cursor: pointer; padding: 0; font-size: 1em; }
 </style>
 
+<?php
+// ...
+    // Mensagens de Sucesso
+    if (isset($_GET['sucesso'])):
+        // ...
+    elseif (isset($_GET['sucesso_exclusao'])):
+        echo '<div class="alert-sucesso">Evolução excluída com sucesso!</div>';
+    // NOVA SEÇÃO DE ERROS
+    elseif (isset($_GET['erro_exclusao'])):
+        echo '<div class="alert-erro">Não foi possível excluir a evolução. Verifique se ela existe e tente novamente.</div>';
+    endif; 
+?>
+
+<style>
+    /* Adicione este estilo para a mensagem de erro, junto do .alert-sucesso */
+    .alert-erro { background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+</style>
+
 <?php require_once '../components/footer.php'; ?>
