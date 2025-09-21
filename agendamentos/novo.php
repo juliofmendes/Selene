@@ -1,10 +1,12 @@
 <?php
 require_once '../auth/verifica_sessao.php';
+autorizar(['secretaria', 'admin']);
 require_once '../config.php';
 
-// Busca todos os pacientes e psicólogos para preencher os menus dropdown
+// Busca todos os recursos necessários para os menus dropdown
 $pacientes = $pdo->query("SELECT id, nome_completo FROM pacientes ORDER BY nome_completo ASC")->fetchAll();
 $psicologos = $pdo->query("SELECT id, nome FROM usuarios WHERE nivel_acesso = 'psicologo' ORDER BY nome ASC")->fetchAll();
+$servicos = $pdo->query("SELECT id, nome, valor FROM servicos WHERE status = 'ativo' ORDER BY nome ASC")->fetchAll();
 
 require_once '../components/header.php';
 ?>
@@ -30,6 +32,17 @@ require_once '../components/header.php';
                     <option value="">Selecione um psicólogo...</option>
                     <?php foreach ($psicologos as $psicologo): ?>
                         <option value="<?php echo $psicologo['id']; ?>"><?php echo htmlspecialchars($psicologo['nome']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="servico_id">Serviço Prestado</label>
+                <select id="servico_id" name="servico_id" required>
+                    <option value="">Selecione um serviço...</option>
+                    <?php foreach ($servicos as $servico): ?>
+                        <option value="<?php echo $servico['id']; ?>" data-valor="<?php echo $servico['valor']; ?>">
+                            <?php echo htmlspecialchars($servico['nome']); ?> (R$ <?php echo number_format($servico['valor'], 2, ',', '.'); ?>)
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
