@@ -15,7 +15,7 @@ $evolucaoStmt->execute(['pid' => $paciente_id]);
 $evolucoes = $evolucaoStmt->fetchAll();
 
 // --- NOVA LÓGICA PARA BUSCAR OS DOCUMENTOS ---
-$docStmt = $pdo->prepare("SELECT id, titulo, data_upload FROM documentos WHERE paciente_id = :pid ORDER BY data_upload DESC");
+$docStmt = $pdo->prepare("SELECT id, titulo, data_upload, nome_arquivo FROM documentos WHERE paciente_id = :pid ORDER BY data_upload DESC");
 $docStmt->execute(['pid' => $paciente_id]);
 $documentos = $docStmt->fetchAll();
 
@@ -23,38 +23,32 @@ $documentos = $docStmt->fetchAll();
 require_once '../components/header.php';
 ?>
 <div class="container">
-    <h1>Dossiê do Paciente: <?php echo htmlspecialchars($paciente['nome_completo']); ?></h1>
-
     <div class="card">
         <h2>Arquivo Digital</h2>
-        <form action="<?php echo BASE_URL; ?>/documentos/processa_upload.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="paciente_id" value="<?php echo $paciente_id; ?>">
-            <div class="form-group">
-                <label for="titulo">Título do Documento</label>
-                <input type="text" name="titulo" required>
-            </div>
-            <div class="form-group">
-                <label for="documento">Ficheiro</label>
-                <input type="file" name="documento" required>
-            </div>
-            <button type="submit">Fazer Upload</button>
-        </form>
         <hr style="margin: 2rem 0;">
         <h3>Documentos Anexados</h3>
         <?php if (count($documentos) > 0): ?>
-            <ul>
+            <table>
+                <tbody>
                 <?php foreach ($documentos as $doc): ?>
-                    <li>
-                        <?php echo htmlspecialchars($doc['titulo']); ?> 
-                        (<?php echo date('d/m/Y', strtotime($doc['data_upload'])); ?>)
-                        - <a href="#">Ver</a> | <a href="#">Excluir</a>
-                    </li>
+                    <tr>
+                        <td><?php echo htmlspecialchars($doc['titulo']); ?></td>
+                        <td><?php echo date('d/m/Y', strtotime($doc['data_upload'])); ?></td>
+                        <td style="text-align: right;">
+                            <a href="<?php echo BASE_URL; ?>/documentos/ver.php?id=<?php echo $doc['id']; ?>" target="_blank" class="button">Ver</a>
+                            <form action="<?php echo BASE_URL; ?>/documentos/excluir.php" method="POST" onsubmit="return confirm('Tem a certeza?');" style="display:inline;">
+                                <input type="hidden" name="doc_id" value="<?php echo $doc['id']; ?>">
+                                <input type="hidden" name="paciente_id" value="<?php echo $paciente_id; ?>">
+                                <button type="submit" class="button button-delete">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
-            </ul>
+                </tbody>
+            </table>
         <?php else: ?>
-            <p>Nenhum documento anexado a este paciente.</p>
+            <p>Nenhum documento anexado.</p>
         <?php endif; ?>
     </div>
-    
     </div>
 <?php require_once '../components/footer.php'; ?>

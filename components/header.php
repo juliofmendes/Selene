@@ -21,14 +21,15 @@
                 <a href="<?php echo BASE_URL; ?>/financeiro/index.php">Faturas</a>
             <?php endif; ?>
 
-            <?php if ($nivel === 'gestor' || $nivel === 'admin'): ?>
+            <?php if ($nivel === 'gestor'): ?>
                 <a href="<?php echo BASE_URL; ?>/dashboard/gestor.php">Dashboard Gestor</a>
                 <a href="<?php echo BASE_URL; ?>/financeiro/relatorios.php">Relatórios</a>
             <?php endif; ?>
 
             <?php if ($nivel === 'admin'): ?>
-                <a href="<?php echo BASE_URL; ?>/admin/usuarios.php">Utilizadores</a>
-                <a href="<?php echo BASE_URL; ?>/admin/servicos.php">Serviços</a>
+                <a href="<?php echo BASE_URL; ?>/admin/index.php">Administração</a>
+                <a href="<?php echo BASE_URL; ?>/dashboard/gestor.php">Visão do Gestor</a>
+                <a href="<?php echo BASE_URL; ?>/financeiro/relatorios.php">Relatórios</a>
             <?php endif; ?>
             
             <a href="<?php echo BASE_URL; ?>/auth/logout.php" class="button button-logout">Sair</a>
