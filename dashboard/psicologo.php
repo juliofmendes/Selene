@@ -32,7 +32,9 @@ require_once '../components/header.php';
                     <tr>
                         <td><?php echo htmlspecialchars($paciente['nome_completo']); ?></td>
                         <td><?php echo htmlspecialchars(ucfirst($paciente['status'])); ?></td>
-                        <td><a href="#">Ver Dossiê</a></td>
+                        
+                        <td><a href="<?php echo BASE_URL; ?>/pacientes/ver.php?id=<?php echo $paciente['id']; ?>">Ver Dossiê</a></td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
