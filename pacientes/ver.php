@@ -43,8 +43,11 @@ $evolucoes = $evolucaoStmt->fetchAll();
 require_once '../components/header.php';
 ?>
 
-<h1>Dossiê do Paciente</h1>
-<a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php">&larr; Voltar para a lista de pacientes</a>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Dossiê do Paciente</h1>
+    <a href="<?php echo BASE_URL; ?>/pacientes/editar.php?id=<?php echo $paciente['id']; ?>" class="button">Editar Dossiê</a>
+</div>
+<a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php">&larr; Voltar para a lista</a>
 
 <div class="card-paciente-info">
     <h2><?php echo htmlspecialchars($paciente['nome_completo']); ?></h2>
@@ -72,7 +75,11 @@ require_once '../components/header.php';
     <?php if (count($evolucoes) > 0): ?>
         <?php foreach ($evolucoes as $evolucao): ?>
             <div class="card-evolucao-item">
-                <h3><?php echo htmlspecialchars($evolucao['titulo']); ?></h3>
+                <div style="display: flex; justify-content: space-between;">
+                    <h3><?php echo htmlspecialchars($evolucao['titulo']); ?></h3>
+                    <div>
+                        <a href="#">Editar</a> | <a href="#">Excluir</a>
+                    </div>
                 <p><strong>Data:</strong> <?php echo date('d/m/Y H:i', strtotime($evolucao['data_evolucao'])); ?></p>
                 <p><?php echo nl2br(htmlspecialchars($evolucao['descricao'])); ?></p>
             </div>
@@ -82,7 +89,7 @@ require_once '../components/header.php';
     <?php endif; ?>
 </div>
 
-<?php // ... footer ... ?>
+<?php require_once '../components/footer.php'; ?>
     </main>
 </body>
 </html>

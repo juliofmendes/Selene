@@ -1,0 +1,60 @@
+/* assets/css/style.css */
+:root {
+    --cor-primaria: #007bff;
+    --cor-fundo: #f0f2f5;
+    --cor-surface: #ffffff;
+    --cor-texto: #1c1e21;
+    --cor-borda: #ddd;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--cor-fundo);
+    margin: 0;
+    padding: 0;
+    color: var(--cor-texto);
+}
+.header {
+    background-color: var(--cor-surface);
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--cor-borda);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.container { padding: 2rem; max-width: 900px; margin: auto; }
+h1, h2, h3 { color: #1c1e21; }
+a { color: var(--cor-primaria); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Formulários */
+.form-group { margin-bottom: 1rem; }
+label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="password"], textarea, select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+textarea { resize: vertical; }
+button[type="submit"], .button {
+    background-color: var(--cor-primaria);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    display: inline-block;
+    text-align: center;
+}
+button[type="submit"]:hover, .button:hover { background-color: #0056b3; }
+.button-delete { background-color: #dc3545; }
+.button-delete:hover { background-color: #c82333; }
+
+/* Cards e Tabelas */
+.card { background: var(--cor-surface); padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.8rem; text-align: left; border-bottom: 1px solid var(--cor-borda); }
+th { font-weight: 600; }
