@@ -10,11 +10,13 @@ switch ($_SESSION['nivel_acesso']) {
         header('Location: secretaria.php');
         break;
     
-    // Outros casos no futuro
-    // case 'gestor': ...
+    case 'gestor':
+    case 'admin': // Admin também pode aceder ao dashboard de gestor
+        header('Location: gestor.php');
+        break;
     
     default:
-        // Segurança: se o nível for desconhecido, desloga.
+        // Segurança
         header('Location: ../auth/logout.php');
         break;
 }
