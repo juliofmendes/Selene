@@ -1,46 +1,45 @@
 <?php
 require_once '../auth/verifica_sessao.php';
-autorizar(['psicologo', 'psicologo_autonomo']); // Garante que apenas psicólogos podem adicionar evoluções
 require_once '../config.php';
 
-// 1. Validação do Método
+// Garante que o acesso é via POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ' . BASE_URL . '/dashboard/psicologo.php');
+    header('Location: ' . BASE_URL . '/dashboard/psicologo.php'); 
     exit;
 }
 
-// 2. Coleta e Validação dos Dados
+// 1. Coletar e validar os dados do formulário
 $paciente_id = filter_input(INPUT_POST, 'paciente_id', FILTER_VALIDATE_INT);
 $titulo = trim($_POST['titulo'] ?? '');
 $descricao = trim($_POST['descricao'] ?? '');
 $psicologo_id = $_SESSION['usuario_id']; // O psicólogo logado é o autor
 
+// Validação de dados essenciais
 if (!$paciente_id || empty($titulo) || empty($descricao)) {
-    // Idealmente, redirecionar com uma mensagem de erro.
-    // Por agora, terminamos para evitar inserção de dados inválidos.
-    die("Erro: Todos os campos são obrigatórios.");
+    // Idealmente, redirecionar com uma mensagem de erro
+    die("Erro: Dados essenciais em falta.");
 }
 
-// 3. Inserção Segura no Banco de Dados
 try {
+    // 2. Preparar e executar a inserção na base de dados
     $stmt = $pdo->prepare(
-        "INSERT INTO evolucoes (paciente_id, psicologo_id, titulo, descricao) 
-         VALUES (:paciente_id, :psicologo_id, :titulo, :descricao)"
+        "INSERT INTO evolucoes (paciente_id, psicologo_id, titulo, descricao, data_evolucao) 
+         VALUES (:pid, :psid, :titulo, :descricao, NOW())"
     );
-
+    
     $stmt->execute([
-        'paciente_id' => $paciente_id,
-        'psicologo_id' => $psicologo_id,
+        'pid' => $paciente_id,
+        'psid' => $psicologo_id,
         'titulo' => $titulo,
         'descricao' => $descricao
     ]);
 
-    // 4. Redirecionamento com Feedback de Sucesso
+    // 3. Redirecionar de volta para o dossiê com uma mensagem de sucesso
     header('Location: ' . BASE_URL . '/pacientes/ver.php?id=' . $paciente_id . '&sucesso_evolucao=1');
     exit;
 
 } catch (PDOException $e) {
-    // Em produção, logar o erro em vez de o exibir.
+    // Em produção, isto deveria ser logado e não exibido
     die("Erro ao adicionar evolução: " . $e->getMessage());
 }
 
