@@ -4,18 +4,18 @@ require_once '../config.php';
 
 // --- LÓGICA DE BUSCA DE DADOS (Unificada) ---
 $paciente_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-if (!$paciente_id) { 
-    header('Location: ' . BASE_URL . '/dashboard/psicologo.php'); 
-    exit; 
+if (!$paciente_id) {
+    header('Location: ' . BASE_URL . '/dashboard/psicologo.php');
+    exit;
 }
 
 // 1. Busca dados do paciente
 $stmt = $pdo->prepare("SELECT * FROM pacientes WHERE id = :pid AND psicologo_id = :psid");
 $stmt->execute(['pid' => $paciente_id, 'psid' => $_SESSION['usuario_id']]);
 $paciente = $stmt->fetch();
-if (!$paciente) { 
-    header('Location: ' . BASE_URL . '/dashboard/psicologo.php'); 
-    exit; 
+if (!$paciente) {
+    header('Location: ' . BASE_URL . '/dashboard/psicologo.php');
+    exit;
 }
 
 // 2. Busca evoluções
@@ -44,7 +44,7 @@ require_once '../components/header.php';
 
     <div class="card">
         <h2>Evoluções Clínicas</h2>
-        <form action="<?php echo BASE_URL; ?>/evolucoes/processa_adicionar.php" method="POST" style="margin-bottom: 2rem; border-bottom: 1px solid var(--cor-borda); padding-bottom: 2rem;">
+        <form action="<?php echo BASE_URL; ?>/evolucoes/processa_adicionar.php" method="POST" class="form-secao">
             <input type="hidden" name="paciente_id" value="<?php echo $paciente['id']; ?>">
             <div class="form-group">
                 <label for="titulo">Título da Sessão/Anotação</label>
@@ -82,7 +82,7 @@ require_once '../components/header.php';
 
     <div class="card">
         <h2>Arquivo Digital</h2>
-        <form action="<?php echo BASE_URL; ?>/documentos/processa_upload.php" method="POST" enctype="multipart/form-data" style="margin-bottom: 2rem; border-bottom: 1px solid var(--cor-borda); padding-bottom: 2rem;">
+        <form action="<?php echo BASE_URL; ?>/documentos/processa_upload.php" method="POST" enctype="multipart/form-data" class="form-secao">
             <input type="hidden" name="paciente_id" value="<?php echo $paciente['id']; ?>">
             <div class="form-group">
                 <label for="titulo_doc">Título do Documento</label>
@@ -126,11 +126,12 @@ require_once '../components/header.php';
     .status-ativo { background-color: #28a745; }
     .status-inativo { background-color: #6c757d; }
     .status-alta { background-color: #17a2b8; }
-    .evolucao-item { border-bottom: 1px solid #eee; padding: 1rem 0; }
+    .form-secao { margin-bottom: 2rem; border-bottom: 1px solid var(--cor-borda); padding-bottom: 2rem; }
+    .evolucao-item { border-bottom: 1px solid #eee; padding: 1.5rem 0; }
     .evolucao-item:last-child { border-bottom: none; }
     .evolucao-header { display: flex; justify-content: space-between; font-size: 0.9em; color: #555; margin-bottom: 0.5rem; }
     .evolucao-actions { display: flex; gap: 1rem; margin-top: 1rem; font-size: 0.9em; }
-    .link-delete { background:none; border:none; color: #dc3545; cursor:pointer; text-decoration:underline; padding:0; }
+    .link-delete { background:none; border:none; color: #dc3545; cursor:pointer; text-decoration:underline; padding:0; font-family: inherit; font-size: inherit; }
 </style>
 
 <?php require_once '../components/footer.php'; ?>
