@@ -15,7 +15,7 @@ if (isset($_SESSION['usuario_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="https://adm.institutopsi.eu.org/testes/img/adm_icon.svg">
+    <link rel="shortcut icon" href="/img/Selene_icon_circle_lado.svg">
     <title>Selene</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,1,0" />
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
