@@ -82,34 +82,31 @@ require_once '../components/header.php';
 
     <div class="card">
         <h2>Arquivo Digital</h2>
-        <form action="<?php echo BASE_URL; ?>/documentos/processa_upload.php" method="POST" enctype="multipart/form-data" class="form-secao">
-            <input type="hidden" name="paciente_id" value="<?php echo $paciente['id']; ?>">
-            <div class="form-group">
-                <label for="titulo_doc">Título do Documento</label>
-                <input type="text" id="titulo_doc" name="titulo" required>
-            </div>
-            <div class="form-group">
-                <label for="documento">Ficheiro (PDF, JPG, PNG, etc.)</label>
-                <input type="file" id="documento" name="documento" required>
-            </div>
-            <button type="submit">+ Anexar Documento</button>
-        </form>
-
-        <?php if (count($documentos) > 0): ?>
-            <table>
-                <tbody>
-                <?php foreach ($documentos as $doc): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($doc['titulo']); ?></td>
-                        <td><?php echo date('d/m/Y', strtotime($doc['data_upload'])); ?></td>
-                        <td style="text-align: right;">
-                            <a href="<?php echo BASE_URL; ?>/documentos/ver.php?id=<?php echo $doc['id']; ?>" target="_blank" class="button">Ver</a>
-                            <form action="<?php echo BASE_URL; ?>/documentos/excluir.php" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir este documento?');" style="display:inline; margin-left: 0.5rem;">
-                                <input type="hidden" name="doc_id" value="<?php echo $doc['id']; ?>">
-                                <input type="hidden" name="paciente_id" value="<?php echo $paciente_id; ?>">
-                                <button type="submit" class="button button-delete">Excluir</button>
-                            </form>
-                        </td>
+			<div class="evolucao-actions action-icons">
+				<a href="<?php echo BASE_URL; ?>/evolucoes/editar.php?id=<?php echo $evolucao['id']; ?>" class="action-icon icon-edit" title="Editar">
+					<i data-feather="edit"></i>
+				</a>
+				<form action="<?php echo BASE_URL; ?>/evolucoes/excluir.php" method="POST" onsubmit="return confirm('Tem a certeza?');">
+					<input type="hidden" name="evolucao_id" value="<?php echo $evolucao['id']; ?>">
+					<input type="hidden" name="paciente_id" value="<?php echo $paciente_id; ?>">
+					<button type="submit" class="action-icon icon-delete" title="Excluir">
+						<i data-feather="trash-2"></i>
+					</button>
+				</form>
+			</div>
+			
+			<td class="action-icons" style="text-align: right;">
+				<a href="<?php echo BASE_URL; ?>/documentos/ver.php?id=<?php echo $doc['id']; ?>" target="_blank" class="action-icon icon-view" title="Ver">
+					<i data-feather="eye"></i>
+				</a>
+				<form action="<?php echo BASE_URL; ?>/documentos/excluir.php" method="POST" onsubmit="return confirm('Tem a certeza?');">
+					<input type="hidden" name="doc_id" value="<?php echo $doc['id']; ?>">
+					<input type="hidden" name="paciente_id" value="<?php echo $paciente_id; ?>">
+					<button type="submit" class="action-icon icon-delete" title="Excluir">
+						<i data-feather="trash-2"></i>
+					</button>
+				</form>
+			</td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

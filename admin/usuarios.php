@@ -29,7 +29,11 @@ require_once '../components/header.php';
                         <td><?php echo htmlspecialchars($usuario['nome']); ?></td>
                         <td><?php echo htmlspecialchars($usuario['email']); ?></td>
                         <td><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $usuario['nivel_acesso']))); ?></td>
-                        <td><a href="usuario_editar.php?id=<?php echo $usuario['id']; ?>">Editar</a></td>
+                        <td class="action-icons">
+							<a href="usuario_editar.php?id=<?php echo $usuario['id']; ?>" class="action-icon icon-edit" title="Editar">
+								<i data-feather="edit"></i>
+							</a>
+						</td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

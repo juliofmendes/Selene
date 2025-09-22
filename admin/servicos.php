@@ -58,9 +58,17 @@ require_once '../components/header.php';
                     <tr>
                         <td><?php echo htmlspecialchars($servico['nome']); ?></td>
                         <td>R$ <?php echo number_format($servico['valor'], 2, ',', '.'); ?></td>
-                        <td>
-                            <a href="?editar_id=<?php echo $servico['id']; ?>">Editar</a>
-                        </td>
+						<td class="action-icons">
+							<a href="?editar_id=<?php echo $servico['id']; ?>" class="action-icon icon-edit" title="Editar">
+								<i data-feather="edit"></i>
+							</a>
+							<form method="POST" action="processa_servico.php" onsubmit="return confirm('Tem a certeza?');">
+								<input type="hidden" name="inativar_servico_id" value="<?php echo $servico['id']; ?>">
+								<button type="submit" class="action-icon icon-delete" title="Inativar">
+									<i data-feather="trash-2"></i>
+								</button>
+							</form>
+						</td>
                     </tr>
                 <?php endforeach; ?>
                  <?php if (count($servicos) === 0): ?>
