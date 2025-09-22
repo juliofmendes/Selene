@@ -3,11 +3,12 @@ require_once '../auth/verifica_sessao.php';
 autorizar(['gestor', 'admin']);
 require_once '../config.php';
 
-// --- LÓGICA DE FILTRAGEM ---
+// --- LÓGICA DE FILTRAGEM AVANÇADA ---
 $filtros = [
     'data_inicio' => $_GET['data_inicio'] ?? date('Y-m-01'),
     'data_fim' => $_GET['data_fim'] ?? date('Y-m-t'),
-    'status' => $_GET['status'] ?? 'todos'
+    'status' => $_GET['status'] ?? 'todos',
+    'psicologo_id' => $_GET['psicologo_id'] ?? 'todos'
 ];
 
 $sql = "SELECT 
@@ -29,12 +30,18 @@ if ($filtros['status'] !== 'todos') {
     $sql .= " AND f.status = :status";
     $params['status'] = $filtros['status'];
 }
-
+if ($filtros['psicologo_id'] !== 'todos') {
+    $sql .= " AND ag.psicologo_id = :psicologo_id";
+    $params['psicologo_id'] = $filtros['psicologo_id'];
+}
 $sql .= " ORDER BY f.data_emissao DESC";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $faturas = $stmt->fetchAll();
+
+// Busca a lista de psicólogos para o filtro
+$psicologos = $pdo->query("SELECT id, nome FROM usuarios WHERE nivel_acesso LIKE 'psicologo%' ORDER BY nome ASC")->fetchAll();
 
 // Calcula os totais com base nos resultados filtrados
 $total_faturado = array_sum(array_column($faturas, 'valor'));
@@ -50,79 +57,39 @@ require_once '../components/header.php';
         <h2>Filtrar Faturas</h2>
         <form method="GET" action="">
             <div class="filter-grid">
+                <div class="form-group"><label>Data de Início</label><input type="date" name="data_inicio" value="<?php echo htmlspecialchars($filtros['data_inicio']); ?>"></div>
+                <div class="form-group"><label>Data de Fim</label><input type="date" name="data_fim" value="<?php echo htmlspecialchars($filtros['data_fim']); ?>"></div>
                 <div class="form-group">
-                    <label for="data_inicio">Data de Início</label>
-                    <input type="date" name="data_inicio" value="<?php echo htmlspecialchars($filtros['data_inicio']); ?>">
+                    <label>Psicólogo</label>
+                    <select name="psicologo_id">
+                        <option value="todos">Todos os Psicólogos</option>
+                        <?php foreach ($psicologos as $psicologo): ?>
+                            <option value="<?php echo $psicologo['id']; ?>" <?php echo $filtros['psicologo_id'] == $psicologo['id'] ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($psicologo['nome']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="data_fim">Data de Fim</label>
-                    <input type="date" name="data_fim" value="<?php echo htmlspecialchars($filtros['data_fim']); ?>">
-                </div>
-                <div class="form-group">
-                    <label for="status">Status</label>
+                    <label>Status</label>
                     <select name="status">
                         <option value="todos" <?php echo $filtros['status'] == 'todos' ? 'selected' : ''; ?>>Todos</option>
                         <option value="paga" <?php echo $filtros['status'] == 'paga' ? 'selected' : ''; ?>>Paga</option>
                         <option value="pendente" <?php echo $filtros['status'] == 'pendente' ? 'selected' : ''; ?>>Pendente</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <button type="submit" style="width: 100%; margin-top: 25px;">Aplicar Filtros</button>
-                </div>
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <button type="submit">Aplicar Filtros</button>
+                <a href="exportar_csv.php?<?php echo http_build_query($filtros); ?>" class="button">Exportar para CSV</a>
             </div>
         </form>
     </div>
 
-    <div class="card kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="kpi-card"><h2>Total Faturado</h2><p class="kpi-value">R$ <?php echo number_format($total_faturado, 2, ',', '.'); ?></p></div>
-        <div class="kpi-card"><h2>Total Recebido</h2><p class="kpi-value">R$ <?php echo number_format($total_pago, 2, ',', '.'); ?></p></div>
-        <div class="kpi-card"><h2>Total Pendente</h2><p class="kpi-value">R$ <?php echo number_format($total_pendente, 2, ',', '.'); ?></p></div>
-    </div>
-
     <div class="card">
-        <h2>Resultados</h2>
+        <h2>Resultados Filtrados</h2>
         <table>
-            <thead>
-                <tr>
-                    <th>Emissão</th>
-                    <th>Status</th>
-                    <th>Paciente</th>
-                    <th>Psicólogo</th>
-                    <th>Valor</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (count($faturas) > 0): ?>
-                    <?php foreach ($faturas as $fatura): ?>
-                        <tr>
-                            <td><?php echo date('d/m/Y', strtotime($fatura['data_emissao'])); ?></td>
-                            <td>
-                                <span class="status-financeiro status-<?php echo htmlspecialchars($fatura['status']); ?>">
-                                    <?php echo htmlspecialchars(ucfirst($fatura['status'])); ?>
-                                </span>
-                            </td>
-                            <td><?php echo htmlspecialchars($fatura['paciente_nome']); ?></td>
-                            <td><?php echo htmlspecialchars($fatura['psicologo_nome']); ?></td>
-                            <td>R$ <?php echo number_format($fatura['valor'], 2, ',', '.'); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="5" style="text-align: center;">Nenhuma fatura encontrada para os filtros selecionados.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+            </table>
     </div>
 </div>
-<style>
-    .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: flex-end; }
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .kpi-card { text-align: center; }
-    .kpi-card h2 { font-size: 1.2em; color: #555; margin-bottom: 0.5rem; }
-    .kpi-value { font-size: 2.5em; font-weight: 600; color: var(--cor-primaria); margin: 0; }
-    .status-financeiro { padding: 0.2rem 0.5rem; border-radius: 4px; color: white; font-size: 0.8em; }
-    .status-pendente { background-color: #ffc107; color: #333; }
-    .status-paga { background-color: #28a745; }
-</style>
 <?php require_once '../components/footer.php'; ?>
