@@ -28,37 +28,24 @@ if (isset($_SESSION['usuario_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selene</title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,1,0" />
 </head>
 <body>
-    <header class="header">
+<header class="header">
         <div class="logo"><strong>Selene</strong></div>
         <nav class="main-nav">
             <?php require __DIR__ . '/nav_links.php'; ?>
-            
             <div class="nav-separator"></div>
-
             <div class="notificacoes-container">
                 <div id="notificacoes-bell" class="notificacoes-bell">
-                    <span>🔔</span>
+                    <span class="material-symbols-rounded">notifications</span>
                     <?php if (count($notificacoes_nao_lidas) > 0): ?>
                         <span class="notificacoes-count"><?php echo count($notificacoes_nao_lidas); ?></span>
                     <?php endif; ?>
                 </div>
                 <div id="notificacoes-dropdown" class="notificacoes-dropdown">
-                    <div class="notificacoes-header">Notificações</div>
-                    <?php if (count($notificacoes_nao_lidas) > 0): ?>
-                        <?php foreach ($notificacoes_nao_lidas as $notificacao): ?>
-                            <a href="<?php echo BASE_URL . ($notificacao['link'] ?? '#'); ?>" class="notificacao-item">
-                                <?php echo htmlspecialchars($notificacao['mensagem']); ?>
-                            </a>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="notificacao-item-vazio">Nenhuma nova notificação</div>
-                    <?php endif; ?>
-                </div>
+                    </div>
             </div>
-
             <a href="<?php echo BASE_URL; ?>/auth/logout.php" class="button button-logout">Sair</a>
         </nav>
     </header>
@@ -78,6 +65,20 @@ if (isset($_SESSION['usuario_id'])) {
         .notificacao-item:last-child { border-bottom: none; }
         .notificacao-item:hover { background-color: #f8f9fa; }
         .notificacao-item-vazio { color: #888; text-align: center; }
+        .action-icons { display: flex; gap: 0.5rem; align-items: center; justify-content: flex-end; }
+		.icon-button {
+			background: none; border: none; padding: 0.5rem; cursor: pointer;
+			display: inline-flex; align-items: center; justify-content: center;
+			border-radius: 50%; transition: background-color 0.2s ease;
+		}
+		.icon-button:hover { background-color: #f0f2f5; }
+		.material-symbols-rounded { 
+			font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+			color: #555;
+		}
+		.icon-button.icon-edit .material-symbols-rounded { color: var(--cor-primaria); }
+		.icon-button.icon-delete .material-symbols-rounded { color: #dc3545; }
+		.icon-button.icon-view .material-symbols-rounded { color: #6c757d; }
     </style>
 
     <script>
