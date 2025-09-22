@@ -27,11 +27,11 @@ if (isset($_SESSION['usuario_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selene</title>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,1,0" />
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
 </head>
 <body>
-<header class="header">
+    <header class="header">
         <div class="logo"><strong>Selene</strong></div>
         <nav class="main-nav">
             <?php require __DIR__ . '/nav_links.php'; ?>
@@ -43,14 +43,11 @@ if (isset($_SESSION['usuario_id'])) {
                         <span class="notificacoes-count"><?php echo count($notificacoes_nao_lidas); ?></span>
                     <?php endif; ?>
                 </div>
-                <div id="notificacoes-dropdown" class="notificacoes-dropdown">
-                    </div>
-            </div>
+                </div>
             <a href="<?php echo BASE_URL; ?>/auth/logout.php" class="button button-logout">Sair</a>
         </nav>
     </header>
     <main>
-    
     <style>
         .main-nav { display: flex; gap: 1.5rem; align-items: center; }
         .nav-separator { border-left: 1px solid #ddd; height: 20px; }
