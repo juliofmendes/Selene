@@ -22,4 +22,7 @@ if ($nivel === 'gestor' || $nivel === 'admin') {
 if ($nivel === 'admin') {
     echo '<a href="' . BASE_URL . '/admin/index.php">Administração</a>';
 }
+
+// Link universal para o perfil, visível para todos os utilizadores logados
+echo '<a href="' . BASE_URL . '/perfil/index.php" title="Meu Perfil"><span class="material-symbols-rounded">account_circle</span></a>';
 ?>
