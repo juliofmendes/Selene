@@ -42,15 +42,15 @@ $kpi_total_pendente = $total_pendente->fetchColumn();
 require_once '../components/header.php';
 ?>
 <div class="container">
+    
     <div class="dossie-header">
-        <div>
-            <h1>Dossiê: <?php echo htmlspecialchars($paciente['nome_completo']); ?></h1>
-        </div>
-        <div>
-            <a href="<?php echo BASE_URL; ?>/pacientes/editar.php?id=<?php echo $paciente['id']; ?>" class="button">Editar Dados</a>
-            <a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php" style="margin-left: 1rem;">&larr; Voltar</a>
-        </div>
-    </div>
+		<h1>Dossiê: <?php echo htmlspecialchars($paciente['nome_completo']); ?></h1>
+		<div>
+			<a href="<?php echo BASE_URL; ?>/anamnese/selecionar_modelo.php?paciente_id=<?php echo $paciente['id']; ?>" class="button">Anamnese</a>
+			<a href="<?php echo BASE_URL; ?>/pacientes/editar.php?id=<?php echo $paciente['id']; ?>" class="button" style="margin-left: 1rem;">Editar Dados</a>
+			<a href="<?php echo BASE_URL; ?>/dashboard/psicologo.php" style="margin-left: 1rem;">&larr; Voltar</a>
+		</div>
+	</div>
     
     <div class="kpi-grid">
         <div class="card kpi-card"><h2>Sessões Realizadas</h2><p class="kpi-value"><?php echo $kpi_total_sessoes; ?></p></div>
