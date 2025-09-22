@@ -1,6 +1,6 @@
 <?php
 require_once '../auth/verifica_sessao.php';
-autorizar(['secretaria', 'admin', 'gestor']);
+autorizar(['secretaria', 'admin', 'gestor', 'psicologo_autonomo']);
 require_once '../config.php';
 
 // Busca todas as faturas, juntando informações do paciente e do serviço
@@ -23,13 +23,34 @@ require_once '../components/header.php';
 
 <div class="container">
     <h1>Dashboard Financeiro</h1>
+    <p>Visualize e gira todas as faturas da clínica.</p>
+
+    <?php if (isset($_GET['sucesso_pagamento'])): ?>
+        <div class="alert-sucesso" style="margin-bottom: 1rem;">Pagamento registado com sucesso!</div>
+    <?php endif; ?>
+
     <div class="card">
         <h2>Faturas Registadas</h2>
         <table>
-            <thead><tr><th>Status</th><th>Emissão</th><th>Paciente</th><th>Serviço</th><th>Valor</th><th>Ações</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Emissão</th>
+                    <th>Paciente</th>
+                    <th>Serviço</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
             <tbody>
                 <?php foreach ($faturas as $fatura): ?>
                     <tr>
+                        <td>
+                            <span class="status-financeiro status-<?php echo htmlspecialchars($fatura['status']); ?>">
+                                <?php echo htmlspecialchars(ucfirst($fatura['status'])); ?>
+                            </span>
+                        </td>
+                        <td><?php echo date('d/m/Y', strtotime($fatura['data_emissao'])); ?></td>
                         <td><?php echo htmlspecialchars($fatura['paciente_nome']); ?></td>
                         <td><?php echo htmlspecialchars($fatura['servico_nome']); ?></td>
                         <td>R$ <?php echo number_format($fatura['valor'], 2, ',', '.'); ?></td>
@@ -49,14 +70,19 @@ require_once '../components/header.php';
                         </td>
                     </tr>
                 <?php endforeach; ?>
+                 <?php if (count($faturas) === 0): ?>
+                    <tr>
+                        <td colspan="6" style="text-align: center;">Nenhuma fatura encontrada.</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
 </div>
 <style>
-    .status-financeiro { padding: 0.2rem 0.5rem; border-radius: 4px; color: white; font-size: 0.8em; }
+    .status-financeiro { padding: 0.2rem 0.5rem; border-radius: 12px; color: white; font-size: 0.8em; font-weight: 500; }
     .status-pendente { background-color: #ffc107; color: #333; }
     .status-paga { background-color: #28a745; }
-    .button-small { padding: 0.4rem 0.8rem; font-size: 0.8em; }
+    .status-cancelada { background-color: #dc3545; }
 </style>
 <?php require_once '../components/footer.php'; ?>
