@@ -4,48 +4,58 @@ autorizar(['psicologo', 'psicologo_autonomo']);
 require_once '../config.php';
 
 $paciente_id = filter_input(INPUT_GET, 'paciente_id', FILTER_VALIDATE_INT);
-if (!$paciente_id) { header('Location: ' . BASE_URL . '/dashboard/psicologo.php'); exit; }
+$modelo_id = filter_input(INPUT_GET, 'modelo_id', FILTER_VALIDATE_INT);
 
-// Verifica se o paciente pertence a este psicólogo
-$stmt = $pdo->prepare("SELECT nome_completo FROM pacientes WHERE id = :pid AND psicologo_id = :psid");
-$stmt->execute(['pid' => $paciente_id, 'psid' => $_SESSION['usuario_id']]);
-$paciente = $stmt->fetch();
-if (!$paciente) { header('Location: ' . BASE_URL . '/dashboard/psicologo.php'); exit; }
+if (!$paciente_id || !$modelo_id) { header('Location: ' . BASE_URL . '/dashboard/psicologo.php'); exit; }
 
-// Verifica se já existe uma anamnese para decidir se é uma criação ou edição
-$anamneseStmt = $pdo->prepare("SELECT dados_anamnese FROM anamneses WHERE paciente_id = :pid");
-$anamneseStmt->execute(['pid' => $paciente_id]);
-$anamnese_existente = $anamneseStmt->fetch();
-$dados = $anamnese_existente ? json_decode($anamnese_existente['dados_anamnese'], true) : [];
+// Busca os dados do modelo
+$stmtModelo = $pdo->prepare("SELECT titulo, estrutura_json FROM anamnese_modelos WHERE id = :id");
+$stmtModelo->execute(['id' => $modelo_id]);
+$modelo = $stmtModelo->fetch();
+if (!$modelo) { die("Modelo de anamnese não encontrado."); }
+
+// VALIDAÇÃO CRÍTICA: Verificamos se o JSON é válido
+$estrutura = json_decode($modelo['estrutura_json'], true);
+if ($estrutura === null || !is_array($estrutura)) {
+    die("Erro Crítico: A estrutura do modelo de anamnese (ID: $modelo_id) é inválida. Por favor, corrija-a no painel de administração.");
+}
+
+// Busca as respostas existentes, se houver
+$stmtRespostas = $pdo->prepare("SELECT respostas_json FROM anamnese_respostas WHERE paciente_id = :pid AND modelo_id = :mid");
+$stmtRespostas->execute(['pid' => $paciente_id, 'mid' => $modelo_id]);
+$respostas_existentes = $stmtRespostas->fetchColumn();
+$dados = $respostas_existentes ? json_decode($respostas_existentes, true) : [];
 
 require_once '../components/header.php';
 ?>
 <div class="container">
-    <h1>Anamnese - <?php echo htmlspecialchars($paciente['nome_completo']); ?></h1>
+    <h1><?php echo htmlspecialchars($modelo['titulo']); ?></h1>
     <a href="<?php echo BASE_URL; ?>/pacientes/ver.php?id=<?php echo $paciente_id; ?>">&larr; Voltar ao Dossiê</a>
 
     <div class="card">
         <form action="processa_anamnese.php" method="POST">
             <input type="hidden" name="paciente_id" value="<?php echo $paciente_id; ?>">
+            <input type="hidden" name="modelo_id" value="<?php echo $modelo_id; ?>">
             
-            <h3>Queixa Principal</h3>
-            <div class="form-group">
-                <label>Qual o motivo da consulta?</label>
-                <textarea name="queixa_principal" rows="4"><?php echo htmlspecialchars($dados['queixa_principal'] ?? ''); ?></textarea>
-            </div>
-
-            <h3>Histórico de Saúde</h3>
-            <div class="form-group">
-                <label>Doenças relevantes, tratamentos anteriores, medicação atual.</label>
-                <textarea name="historico_saude" rows="4"><?php echo htmlspecialchars($dados['historico_saude'] ?? ''); ?></textarea>
-            </div>
+            <?php foreach ($estrutura as $campo): ?>
+                <div class="form-group">
+                    <label for="<?php echo htmlspecialchars($campo['name']); ?>"><?php echo htmlspecialchars($campo['label']); ?></label>
+                    <?php if ($campo['tipo'] === 'textarea'): ?>
+                        <textarea name="<?php echo htmlspecialchars($campo['name']); ?>" rows="5"><?php echo htmlspecialchars($dados[$campo['name']] ?? ''); ?></textarea>
+                    <?php elseif ($campo['tipo'] === 'select' && isset($campo['options']) && is_array($campo['options'])): ?>
+                        <select name="<?php echo htmlspecialchars($campo['name']); ?>">
+                            <?php foreach ($campo['options'] as $option): ?>
+                                <option value="<?php echo htmlspecialchars($option); ?>" <?php echo (isset($dados[$campo['name']]) && $dados[$campo['name']] == $option) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($option); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php else: // 'text', 'date', etc. ?>
+                        <input type="<?php echo htmlspecialchars($campo['tipo']); ?>" name="<?php echo htmlspecialchars($campo['name']); ?>" value="<?php echo htmlspecialchars($dados[$campo['name']] ?? ''); ?>">
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
             
-            <h3>Histórico Familiar</h3>
-            <div class="form-group">
-                <label>Relações familiares, eventos marcantes, histórico de saúde mental na família.</label>
-                <textarea name="historico_familiar" rows="4"><?php echo htmlspecialchars($dados['historico_familiar'] ?? ''); ?></textarea>
-            </div>
-
             <button type="submit">Salvar Anamnese</button>
         </form>
     </div>
