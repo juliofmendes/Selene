@@ -46,9 +46,10 @@ require_once '../components/header.php';
 	<div class="dossie-header">
 		<h1>Dossiê: <?php echo htmlspecialchars($paciente['nome_completo']); ?></h1>
 		<div>
-			<a href="<?php echo BASE_URL; ?>/anamnese/preencher.php?paciente_id=<?php echo $paciente['id']; ?>" class="button">Anamnese</a>
+			<a href="<?php echo BASE_URL; ?>/anamnese/selecionar_modelo.php?paciente_id=<?php echo $paciente['id']; ?>" class="button">Anamnese</a>
 			<a href="<?php echo BASE_URL; ?>/pacientes/editar.php?id=<?php echo $paciente['id']; ?>" class="button" style="margin-left: 1rem;">Editar Dados</a>
 		</div>
+	</div>
 	</div>
 
     <div class="kpi-grid">
